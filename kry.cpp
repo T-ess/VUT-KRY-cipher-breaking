@@ -123,6 +123,18 @@ bool checkText(std::string text) {
     return false;
 }
 
+std::string checkOutput(int a, int b, std::string text) {
+    std::string output;
+    if (checkA(a)) {
+        output = decrypt(text, a, b);
+        if (checkText(output)) {
+            std::cout << "a=" << a << ",b=" << b << std::endl;
+            return output;
+        }
+    }
+    return "";
+}
+
 std::pair<int, int> calculateKeys(int max1, int max2, int max3) {
     int a = max3 - max1;
     int b = 0;
@@ -134,6 +146,26 @@ std::pair<int, int> calculateKeys(int max1, int max2, int max3) {
     } else {
         return {0, 0};
     }
+}
+
+std::pair<int, int> calculateKeysFirstEq(int max1, int max2, int max3) {
+    int temp = max1 - max2;
+    if (((temp % 4) + 4) % 4 == 0) {
+        temp /= 4;
+        int a = ((temp % 26) + 26) % 26;
+        return {a, max2};
+    }
+    return {0, 0};
+}
+
+std::pair<int, int> calculateKeysSecondEq(int max1, int max2, int max3) {
+    int temp = max3 - max2;
+    if (((temp % 2) + 2) % 2 == 0) {
+        temp = temp / 2 * 15;
+        int a = ((temp % 26) + 26) % 26;
+        return {a, max2};
+    }
+    return {0, 0};
 }
 
 std::string encrypt(std::string text, int a, int b) {
@@ -194,28 +226,40 @@ std::string decryptWithoutKey(std::string text) {
     std::string output;
     std::pair<int, int> keys;
     keys = calculateKeys(maxI1, maxI2, maxI3);
-    if (checkA(keys.first)) {
-        output = decrypt(text, keys.first, keys.second);
-        if (checkText(output)) {
-            std::cout << "a=" << keys.first << ",b=" << keys.second << std::endl;
-            return output;
-        }
-    }
+    output = checkOutput(keys.first, keys.second, text);
+    if (output.length() != 0) return output;
+
+    keys = calculateKeysFirstEq(maxI1, maxI2, maxI3);
+    output = checkOutput(keys.first, keys.second, text);
+    if (output.length() != 0) return output;
+
+    keys = calculateKeysSecondEq(maxI1, maxI2, maxI3);
+    output = checkOutput(keys.first, keys.second, text);
+    if (output.length() != 0) return output;
+
     keys = calculateKeys(maxI2, maxI1, maxI3);
-    if (checkA(keys.first)) {
-        output = decrypt(text, keys.first, keys.second);
-        if (checkText(output)) {
-            std::cout << "a=" << keys.first << ",b=" << keys.second << std::endl;
-            return output;
-        }
-    }
+    output = checkOutput(keys.first, keys.second, text);
+    if (output.length() != 0) return output;
+
+    keys = calculateKeysFirstEq(maxI2, maxI1, maxI3);
+    output = checkOutput(keys.first, keys.second, text);
+    if (output.length() != 0) return output;
+
+    keys = calculateKeysSecondEq(maxI2, maxI1, maxI3);
+    output = checkOutput(keys.first, keys.second, text);
+    if (output.length() != 0) return output;
+
     keys = calculateKeys(maxI1, maxI3, maxI2);
-    if (checkA(keys.first)) {
-        output = decrypt(text, keys.first, keys.second);
-        if (checkText(output)) {
-            std::cout << "a=" << keys.first << ",b=" << keys.second << std::endl;
-            return output;
-        }
-    }
+    output = checkOutput(keys.first, keys.second, text);
+    if (output.length() != 0) return output;
+
+    keys = calculateKeysFirstEq(maxI1, maxI3, maxI2);
+    output = checkOutput(keys.first, keys.second, text);
+    if (output.length() != 0) return output;
+
+    keys = calculateKeysSecondEq(maxI1, maxI3, maxI2);
+    output = checkOutput(keys.first, keys.second, text);
+    if (output.length() != 0) return output;
+
     return "";
 }

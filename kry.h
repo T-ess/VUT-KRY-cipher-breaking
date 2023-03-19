@@ -18,7 +18,13 @@ int multInv(int a);
 
 bool checkText(std::string text);
 
+std::string checkOutput(int a, int b, std::string text);
+
 std::pair<int, int> calculateKeys(int max1, int max2, int max3);
+
+std::pair<int, int> calculateKeysFirstEq(int max1, int max2, int max3);
+
+std::pair<int, int> calculateKeysSecondEq(int max1, int max2, int max3);
 
 std::string encrypt(std::string text, int a, int b);
 
